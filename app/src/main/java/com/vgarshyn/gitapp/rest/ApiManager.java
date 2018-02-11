@@ -1,5 +1,13 @@
 package com.vgarshyn.gitapp.rest;
 
+import com.vgarshyn.gitapp.rest.model.Contributor;
+import com.vgarshyn.gitapp.utils.HeaderLinkParser;
+
+import java.io.IOException;
+import java.util.List;
+
+import io.reactivex.Observable;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -26,6 +34,44 @@ public class ApiManager {
                 .build();
 
         api = retrofit.create(GitHubAPI.class);
+    }
+
+    public Observable<List<Contributor>> getContributors(int page) {
+        return api.getContributors(REPO_OWNER, REPO_NAME, page, COUNT_PER_PAGE)
+                .map(r -> r.body());
+    }
+
+    public Observable<List<Contributor>> fetchAllContributors() {
+        final int startPage = 1;
+        return api.getContributors(REPO_OWNER, REPO_NAME, startPage, COUNT_PER_PAGE)
+                .switchMap(response -> {
+
+                    if (response.body() == null && response.errorBody() != null) {
+                        throw new IOException(response.errorBody().string());
+                    }
+
+                    int maxPage = getMaxPage(response);
+
+                    return Observable.just(response.body())
+                            .zipWith(fetchPages(startPage + 1, maxPage), (list1, list2) -> {
+                                list1.addAll(list2);
+                                return list1;
+                            });
+                });
+    }
+
+    private Observable<List<Contributor>> fetchPages(int start, int end) {
+        return Observable.range(start, end)
+                .switchMap(page -> getContributors(page))
+                .flatMapIterable(list -> list)
+                .toList()
+                .toObservable();
+    }
+
+    private int getMaxPage(Response<?> response) {
+        String headerLinks = response.headers().get(HEADER_LINK);
+        HeaderLinkParser parser = new HeaderLinkParser(headerLinks);
+        return parser.getMaxPagesCount();
     }
 
 }
