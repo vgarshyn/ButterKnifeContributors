@@ -1,10 +1,10 @@
 # ButterKnifeContributors
 Android test project to display contributors of ButterKnife library
-
-
-Requirements for build:
-
-Android Studio 3
-compileSdkVersion 26
-buildToolsVersion '26.0.2'
-Java 8
+\n
+\n
+\nRequirements for build:
+\n
+\nAndroid Studio 3
+\ncompileSdkVersion 26
+\nbuildToolsVersion '26.0.2'
+\nJava 8
