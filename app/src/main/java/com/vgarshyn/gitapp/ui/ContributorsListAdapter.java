@@ -23,10 +23,7 @@ public class ContributorsListAdapter extends RecyclerView.Adapter<ContributorsLi
 
     private List<Contributor> contributors = Collections.emptyList();
 
-    public ContributorsListAdapter(List<Contributor> contributors) {
-        if (contributors != null) {
-            this.contributors = contributors;
-        }
+    public ContributorsListAdapter() {
     }
 
     @Override
@@ -56,6 +53,11 @@ public class ContributorsListAdapter extends RecyclerView.Adapter<ContributorsLi
     @Override
     public int getItemCount() {
         return contributors.size();
+    }
+
+    public void setContributors(List<Contributor> contributors) {
+        this.contributors = contributors == null ? Collections.emptyList() : contributors;
+        notifyDataSetChanged();
     }
 
     public static class ContributorVH extends RecyclerView.ViewHolder {
