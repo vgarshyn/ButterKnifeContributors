@@ -18,6 +18,10 @@ import io.reactivex.subjects.PublishSubject;
 
 
 /**
+ * This ViewModel class cares about storing list of contributors separate from Activity lifecycle.
+ * Used {@link LiveData} to easy handling changes.
+ * If error occurred Activity will be notified through {@link PublishSubject} if subscribed correctly
+ *
  * Created by v.garshyn on 12.02.18.
  */
 
@@ -31,6 +35,11 @@ public class ContributorsViewModel extends ViewModel implements Consumer<List<Co
         contributorsData.postValue(contributors);
     }
 
+    /**
+     * Returns LiveData for contributors list.
+     * If contributors list is empty perform loading request
+     * @return
+     */
     public LiveData<List<Contributor>> getContributorsData() {
         if (isEmptyData()) {
             loadContributors();
@@ -38,10 +47,19 @@ public class ContributorsViewModel extends ViewModel implements Consumer<List<Co
         return contributorsData;
     }
 
+    /**
+     * Subscribe observer listen for errors.
+     * Returns {@link Disposable}
+     * @param consumer
+     * @return
+     */
     public Disposable subscribeErrorHandler(@NonNull Consumer<Throwable> consumer) {
         return exceptionWatcher.subscribe(consumer);
     }
 
+    /**
+     * Get all contributors and handle
+     */
     public void loadContributors() {
         ContributorsApp.getInstance()
                 .getApiManager()
@@ -51,6 +69,10 @@ public class ContributorsViewModel extends ViewModel implements Consumer<List<Co
                 .subscribe(this, e -> exceptionWatcher.onNext(e));
     }
 
+    /**
+     * Check is any contributors data is already stored
+     * @return
+     */
     private boolean isEmptyData() {
         List<?> collection = contributorsData.getValue();
         return collection == null || collection.isEmpty();

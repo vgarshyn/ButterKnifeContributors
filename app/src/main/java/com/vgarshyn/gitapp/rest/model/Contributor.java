@@ -3,6 +3,9 @@ package com.vgarshyn.gitapp.rest.model;
 import com.google.gson.annotations.SerializedName;
 
 /**
+ * POJO represent GitHub contributor's JSON
+ * see more: https://developer.github.com/v3/repos/#list-contributors
+ *
  * Created by v.garshyn on 11.02.18.
  */
 

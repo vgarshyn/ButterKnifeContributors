@@ -20,6 +20,14 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.disposables.Disposable;
 
+/**
+ * Main activity uses to show list of contributors
+ * Contains logic to display data.
+ * Logic for handling rotation and invoking network calls implemented through Android Architectural Components
+ * See more: https://developer.android.com/topic/libraries/architecture/guide.html
+ *
+ * Created by v.garshyn on 11.02.18.*
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final String KEY_LIST_STATE = "state.list_position";
@@ -89,6 +97,9 @@ public class MainActivity extends AppCompatActivity {
         errorHandler.dispose();
     }
 
+    /**
+     * Renew dataset by executing new network request
+     */
     @OnClick(R.id.fab)
     public void forceLoadContributors() {
         contributorsAdapter.setContributors(null);
@@ -96,14 +107,24 @@ public class MainActivity extends AppCompatActivity {
         contributorsViewModel.loadContributors();
     }
 
+    /**
+     * Display progressbar
+     */
     public void showProgressbar() {
         progressBar.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Hide progressbar
+     */
     public void hideProgressbar() {
         progressBar.setVisibility(View.GONE);
     }
 
+    /**
+     * Show error message as {@link Snackbar}
+     * @param message
+     */
     public void notifyError(String message) {
         Log.e(getClass().getName(), message);
         hideProgressbar();

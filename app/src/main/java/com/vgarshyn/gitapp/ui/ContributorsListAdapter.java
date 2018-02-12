@@ -16,6 +16,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * Trivial Adapter for {@link RecyclerView}
+ *
  * Created by v.garshyn on 11.02.18.
  */
 
@@ -55,11 +57,18 @@ public class ContributorsListAdapter extends RecyclerView.Adapter<ContributorsLi
         return contributors.size();
     }
 
+    /**
+     * Update dataset and notify Recycler about changes
+     * @param contributors
+     */
     public void setContributors(List<Contributor> contributors) {
         this.contributors = contributors == null ? Collections.emptyList() : contributors;
         notifyDataSetChanged();
     }
 
+    /**
+     * ViewHolder based on <i>R.layout.item_contributor</i>
+     */
     public static class ContributorVH extends RecyclerView.ViewHolder {
 
         ImageView avatarView;

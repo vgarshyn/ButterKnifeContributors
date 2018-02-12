@@ -4,6 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * GitHub API uses web linking https://tools.ietf.org/html/rfc5988 in Headers for pagination.
+ * This class parse "Link" string in order to extract useful data such as firs, last link, max pages & etc.
+ * See more https://developer.github.com/v3/#pagination
+ *
  * Created by v.garshyn on 11.02.18.
  */
 
@@ -19,6 +23,10 @@ public class HeaderLinkParser {
 
     private final HashMap<String, String> linksMap = new HashMap<>(4);
 
+    /**
+     * Constructor try to sort out passed "Link" string
+     * @param linkHeader
+     */
     public HeaderLinkParser(String linkHeader) {
         if (linkHeader != null) {
             String[] links = linkHeader.split(",");
@@ -51,22 +59,43 @@ public class HeaderLinkParser {
         }
     }
 
+    /**
+     * Get link to first page
+     * @return
+     */
     public String getFirstLink() {
         return linksMap.get(KEY_FIRST);
     }
 
+    /**
+     * Get link to last page
+     * @return
+     */
     public String getLastLink() {
         return linksMap.get(KEY_LAST);
     }
 
+    /**
+     * Get link to next page
+     * @return
+     */
     public String getNextLink() {
         return linksMap.get(KEY_NEXT);
     }
 
+    /**
+     * Get link to previous page
+     * @return
+     */
     public String getPrevLink() {
         return linksMap.get(KEY_PREV);
     }
 
+    /**
+     * Get max available pages from available links.
+     * Try to find link to last page and extract param {@link HeaderLinkParser#PARAM_PAGE}
+     * @return
+     */
     public int getMaxPagesCount() {
         String url;
         Map<String, String> params;
@@ -94,6 +123,12 @@ public class HeaderLinkParser {
         return 0;
     }
 
+    /**
+     * Parse Url to extract GET params
+     *
+     * @param query
+     * @return
+     */
     public static Map<String, String> getQueryParams(String query) {
         Map<String, String> map = new HashMap<>();
         String[] urlParts = query.split("\\?");
