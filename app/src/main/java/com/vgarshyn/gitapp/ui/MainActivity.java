@@ -11,9 +11,13 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.vgarshyn.gitapp.R;
+import com.vgarshyn.gitapp.rest.model.Contributor;
 import com.vgarshyn.gitapp.viewmodel.ContributorsViewModel;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
+    @BindView(R.id.totalCount)
+    TextView textCount;
 
     private ContributorsListAdapter contributorsAdapter;
     private ContributorsViewModel contributorsViewModel;
@@ -80,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         errorHandler = contributorsViewModel.subscribeErrorHandler(e -> notifyError(e.getMessage()));
         contributorsViewModel.getContributorsData().observe(this, (data) -> {
             contributorsAdapter.setContributors(data);
+            updateTextCount(data);
             hideProgressbar();
         });
     }
@@ -104,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
     public void forceLoadContributors() {
         contributorsAdapter.setContributors(null);
         showProgressbar();
+        textCount.setVisibility(View.INVISIBLE);
         contributorsViewModel.loadContributors();
     }
 
@@ -119,6 +127,19 @@ public class MainActivity extends AppCompatActivity {
      */
     public void hideProgressbar() {
         progressBar.setVisibility(View.GONE);
+    }
+
+    /**
+     * Update text of total count of contributors
+     * @param data
+     */
+    private void updateTextCount(List<Contributor> data) {
+        if (data != null && !data.isEmpty()) {
+            textCount.setVisibility(View.VISIBLE);
+            textCount.setText(getString(R.string.total_count, data.size()));
+        } else {
+            textCount.setVisibility(View.INVISIBLE);
+        }
     }
 
     /**
