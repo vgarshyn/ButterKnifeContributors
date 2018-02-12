@@ -18,11 +18,11 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiManager {
 
+    private static final int COUNT_PER_PAGE = 30;
     private static final String URL_API = "https://api.github.com";
     private static final String REPO_OWNER = "JakeWharton";
     private static final String REPO_NAME = "butterknife";
     private static final String HEADER_LINK = "Link";
-    private static final int COUNT_PER_PAGE = 30;
 
     private GitHubAPI api;
 
@@ -38,13 +38,13 @@ public class ApiManager {
 
     public Observable<List<Contributor>> getContributors(int page) {
         return api.getContributors(REPO_OWNER, REPO_NAME, page, COUNT_PER_PAGE)
-                .map(r -> r.body());
+                .map(response -> response.body());
     }
 
     public Observable<List<Contributor>> fetchAllContributors() {
         final int startPage = 1;
         return api.getContributors(REPO_OWNER, REPO_NAME, startPage, COUNT_PER_PAGE)
-                .switchMap(response -> {
+                .flatMap(response -> {
 
                     if (response.body() == null && response.errorBody() != null) {
                         throw new IOException(response.errorBody().string());
@@ -62,8 +62,8 @@ public class ApiManager {
 
     private Observable<List<Contributor>> fetchPages(int start, int end) {
         return Observable.range(start, end)
-                .switchMap(page -> getContributors(page))
-                .flatMapIterable(list -> list)
+                .concatMap(page -> getContributors(page))
+                .concatMapIterable(list -> list)
                 .toList()
                 .toObservable();
     }
