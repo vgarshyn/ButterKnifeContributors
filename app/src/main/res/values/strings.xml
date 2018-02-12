@@ -1,3 +1,6 @@
 <resources>
-    <string name="app_name">ButterKnifeContributors</string>
+    <string name="app_name">ButterKnife Contributors</string>
+    <string name="commits_statistic">%1$d commits</string>
+    <string name="number_format">#%1$d</string>
+    <string name="total_count">Total contributors count: %1$d</string>
 </resources>
