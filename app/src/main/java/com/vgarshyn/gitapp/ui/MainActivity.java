@@ -12,28 +12,28 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import com.vgarshyn.gitapp.ContributorsApp;
 import com.vgarshyn.gitapp.R;
 import com.vgarshyn.gitapp.viewmodel.ContributorsViewModel;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
+import io.reactivex.disposables.Disposable;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String KEY_LIST_STATE = "state.list_position";
 
-    @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.contributorsList) RecyclerView recyclerView;
-    @BindView(R.id.progressBar) ProgressBar progressBar;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.contributorsList)
+    RecyclerView recyclerView;
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
 
     private ContributorsListAdapter contributorsAdapter;
     private ContributorsViewModel contributorsViewModel;
+    private Disposable errorHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +53,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setDrawingCacheEnabled(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(contributorsAdapter);
-
-        if (isEmptyData()) {
-            loadContributors();
-        }
     }
 
     @Override
@@ -73,7 +69,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        contributorsViewModel.contributorsData.observe(this, (data)-> {
+        errorHandler = contributorsViewModel.subscribeErrorHandler(e -> notifyError(e.getMessage()));
+        contributorsViewModel.getContributorsData().observe(this, (data) -> {
             contributorsAdapter.setContributors(data);
             hideProgressbar();
         });
@@ -89,14 +86,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        contributorsViewModel.contributorsData.removeObservers(this);
+        errorHandler.dispose();
     }
 
     @OnClick(R.id.fab)
     public void forceLoadContributors() {
         contributorsAdapter.setContributors(null);
         showProgressbar();
-        loadContributors();
+        contributorsViewModel.loadContributors();
     }
 
     public void showProgressbar() {
@@ -111,20 +108,6 @@ public class MainActivity extends AppCompatActivity {
         Log.e(getClass().getName(), message);
         hideProgressbar();
         Snackbar.make(toolbar, message, Snackbar.LENGTH_LONG).show();
-    }
-
-    private void loadContributors() {
-        ContributorsApp.from(this)
-                .getApiManager()
-                .fetchAllContributors()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(contributorsViewModel, e -> notifyError(e.getMessage()));
-    }
-
-    private boolean isEmptyData() {
-        List<?> collection = contributorsViewModel.contributorsData.getValue();
-        return collection == null || collection.isEmpty();
     }
 
 }

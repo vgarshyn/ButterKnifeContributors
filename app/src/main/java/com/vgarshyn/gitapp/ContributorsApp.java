@@ -1,7 +1,6 @@
 package com.vgarshyn.gitapp;
 
 import android.app.Application;
-import android.content.Context;
 
 import com.vgarshyn.gitapp.rest.ApiManager;
 
@@ -11,11 +10,13 @@ import com.vgarshyn.gitapp.rest.ApiManager;
 
 public class ContributorsApp extends Application {
 
-    ApiManager apiManager;
+    private static ContributorsApp app;
+    private ApiManager apiManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        app = this;
         apiManager = new ApiManager();
     }
 
@@ -23,7 +24,7 @@ public class ContributorsApp extends Application {
         return apiManager;
     }
 
-    public static ContributorsApp from(Context context) {
-        return (ContributorsApp)context.getApplicationContext();
+    public static ContributorsApp getInstance() {
+        return app;
     }
 }
