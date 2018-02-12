@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.vgarshyn.gitapp.MainActivity">
+    tools:context="com.vgarshyn.gitapp.ui.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBar"
@@ -35,11 +35,20 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler"
+        android:id="@+id/contributorsList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/item_contributor"
+        />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:layout_anchor="@id/contributorsList"
+        app:layout_anchorGravity="center"
         />
 
     <android.support.design.widget.FloatingActionButton
@@ -49,6 +58,6 @@
         android:layout_margin="@dimen/fab_margin"
         app:layout_anchor="@id/appBar"
         app:layout_anchorGravity="bottom|end"
-        app:srcCompat="@android:drawable/ic_menu_compass" />
+        app:srcCompat="@drawable/ic_update" />
 
 </android.support.design.widget.CoordinatorLayout>
