@@ -22,6 +22,7 @@ import butterknife.BindView
 import butterknife.ButterKnife
 import butterknife.OnClick
 import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Consumer
 
 /**
  * Main activity uses to show list of contributors
@@ -78,8 +79,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        errorHandler = contributorsViewModel.subscribeErrorHandler { notifyError(it.message) }
-        contributorsViewModel.contributorsData.observe(this@MainActivity, Observer<List<Contributor>> {
+        errorHandler = contributorsViewModel.subscribeErrorHandler(Consumer { notifyError(it.message) })
+        contributorsViewModel.getContributorsData().observe(this@MainActivity, Observer<List<Contributor>> {
             contributorsAdapter.setContributors(it)
             updateTextCount(it)
             hideProgressbar()
