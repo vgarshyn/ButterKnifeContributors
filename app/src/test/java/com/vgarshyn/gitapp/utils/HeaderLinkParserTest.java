@@ -82,7 +82,7 @@ public class HeaderLinkParserTest {
 
     @Test
     public void getQueryParams() throws Exception {
-        Map<String, String> params = HeaderLinkParser.getQueryParams(FIRST);
+        Map<String, String> params = HeaderLinkParser.Util.getQueryParams(FIRST);
         assertNotNull(params);
         assertThat(params.isEmpty(), is(false));
         assertThat(params.get("page"), is("1"));
