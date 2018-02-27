@@ -30,15 +30,17 @@ class ContributorsListAdapter : RecyclerView.Adapter<ContributorsListAdapter.Con
         val contributor = contributors[position]
         val context = holder.itemView.context
 
-        val statisticText = context.getString(R.string.commits_statistic, contributor.contributions)
-        val formattedNumber = context.getString(R.string.number_format, position + 1)
+        with(contributor) {
+            val statisticText = context.getString(R.string.commits_statistic, contributions)
+            val formattedNumber = context.getString(R.string.number_format, position + 1)
+            Picasso.with(context)
+                    .load(avatarUrl)
+                    .into(holder.avatarView)
+            holder.loginView.text = login
+            holder.numberView.text = formattedNumber
+            holder.statisticView.text = statisticText
+        }
 
-        Picasso.with(context)
-                .load(contributor.avatarUrl)
-                .into(holder.avatarView)
-        holder.loginView.text = contributor.login
-        holder.numberView.text = formattedNumber
-        holder.statisticView.text = statisticText
     }
 
     override fun getItemCount(): Int {
